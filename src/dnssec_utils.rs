@@ -27,17 +27,34 @@ pub fn resolve_proof(dns_name: &Name, proof: Vec<u8>) -> Result<HrnResolution, &
 	let mut result = None;
 	for rr in resolved_rrs {
 		if let RR::Txt(txt) = rr {
-			if result.is_some() {
-				return Err("Multiple TXT records existed for the HRN, which is invalid");
+			let txt = txt.data.as_vec();
+			if has_bitcoin_prefix(&txt) {
+				if result.is_some() {
+					return Err("Multiple TXT records existed for the HRN, which is invalid");
+				}
+				result = Some(txt);
 			}
-			result = Some(txt.data.as_vec());
 		}
 	}
-	if let Some(res) = result {
-		let result =
-			String::from_utf8(res).map_err(|_| "TXT record contained an invalid string")?;
-		Ok(HrnResolution::DNSSEC { proof: Some(proof), result })
-	} else {
-		Err("No validated TXT record found")
+	let res = result.ok_or("No validated TXT record found")?;
+	let result = String::from_utf8(res).map_err(|_| "TXT record contained an invalid string")?;
+	Ok(HrnResolution::DNSSEC { proof: Some(proof), result })
+}
+
+fn has_bitcoin_prefix(text: &[u8]) -> bool {
+	const URI_PREFIX: &[u8] = b"bitcoin:";
+	text.len() >= URI_PREFIX.len() && text[..URI_PREFIX.len()].eq_ignore_ascii_case(URI_PREFIX)
+}
+
+#[cfg(test)]
+mod tests {
+	use super::has_bitcoin_prefix;
+
+	#[test]
+	fn detects_expected_prefix() {
+		assert!(has_bitcoin_prefix(b"bitcoin:bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kg3g4ty"));
+		assert!(has_bitcoin_prefix(b"BiTcOiN:pay?amount=1000"));
+		assert!(!has_bitcoin_prefix(b"lightning:lnurl"));
+		assert!(!has_bitcoin_prefix(b"bitco"));
 	}
 }
