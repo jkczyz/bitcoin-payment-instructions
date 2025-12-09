@@ -182,13 +182,13 @@ where
 		// TODO: Once LDK 0.2 ships with a new context authentication method, we shouldn't need the
 		// RNG here and can stop depending on std.
 		let (query, dns_context) =
-			self.resolver.resolve_name(payment_id, hrn.clone(), &OsRng).map_err(|_| err)?;
+			self.resolver.resolve_name(payment_id, *hrn, &OsRng).map_err(|_| err)?;
 		let context = MessageContext::DNSResolver(dns_context);
 
 		let (send, recv) = channel();
 		{
 			let mut pending_resolutions = self.pending_resolutions.lock().unwrap();
-			let senders = pending_resolutions.entry(hrn.clone()).or_insert_with(Vec::new);
+			let senders = pending_resolutions.entry(*hrn).or_insert_with(Vec::new);
 			senders.push((payment_id, send));
 
 			// If we're running in no-std, we won't expire lookups with the time updates above, so walk
