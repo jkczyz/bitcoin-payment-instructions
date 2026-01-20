@@ -608,6 +608,12 @@ impl CashuPaymentRequest {
 		Self::from_bech32_bytes(&data)
 	}
 
+	#[cfg(fuzzing)]
+	/// Decode from a byte array so the fuzzer can bypass bech32
+	pub fn from_bytes_fuzzy(bytes: &[u8]) -> Result<CashuPaymentRequest, Error> {
+		Self::from_bech32_bytes(bytes)
+	}
+
 	/// Decode from TLV bytes
 	fn from_bech32_bytes(bytes: &[u8]) -> Result<CashuPaymentRequest, Error> {
 		let mut reader = TlvReader::new(bytes);
