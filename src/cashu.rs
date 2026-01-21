@@ -40,10 +40,10 @@ pub enum Error {
 ///
 /// Stores strings of 11 bytes or less inline without heap allocation.
 /// Longer strings fall back to heap allocation.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct UnitString(UnitStringInner);
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 enum UnitStringInner {
 	Inline { bytes: [u8; INLINE_UNIT_BYTES], len: u8 },
 	Heap(String),
@@ -101,6 +101,12 @@ impl AsRef<str> for UnitString {
 }
 
 impl fmt::Display for UnitString {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		fmt::Display::fmt(self.as_str(), f)
+	}
+}
+
+impl fmt::Debug for UnitString {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		fmt::Display::fmt(self.as_str(), f)
 	}
@@ -188,7 +194,7 @@ pub enum TransportType {
 
 /// A value in a TagTuple, stored inline to avoid heap allocation.
 /// Maximum length is 255 bytes (enforced by the TLV encoding).
-#[derive(Copy, Clone, Debug, Eq)]
+#[derive(Copy, Clone, Eq)]
 pub struct TagValue {
 	bytes: [u8; 255],
 	len: u8,
@@ -234,6 +240,12 @@ impl AsRef<str> for TagValue {
 }
 
 impl fmt::Display for TagValue {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		f.write_str(self.as_str())
+	}
+}
+
+impl fmt::Debug for TagValue {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		f.write_str(self.as_str())
 	}
