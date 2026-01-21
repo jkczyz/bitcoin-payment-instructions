@@ -1025,14 +1025,14 @@ impl CashuPaymentRequest {
 	}
 
 	/// Decode nprofile bech32 string to (pubkey, relays)
-	fn decode_nprofile(nprofile: &str) -> Result<(Vec<u8>, Vec<String>), Error> {
+	fn decode_nprofile(nprofile: &str) -> Result<([u8; 32], Vec<String>), Error> {
 		let (hrp, data) = bech32::decode(nprofile).map_err(|_| Error::Bech32)?;
 		if hrp.as_str() != "nprofile" {
 			return Err(Error::InvalidPrefix);
 		}
 
 		let mut pos = 0;
-		let mut pubkey: Option<Vec<u8>> = None;
+		let mut pubkey: Option<[u8; 32]> = None;
 		let mut relays: Vec<String> = Vec::new();
 
 		while pos < data.len() {
@@ -1057,7 +1057,7 @@ impl CashuPaymentRequest {
 					if value.len() != 32 {
 						return Err(Error::InvalidLength);
 					}
-					pubkey = Some(value.to_vec());
+					pubkey = Some(value.try_into().expect("len is 32"));
 				},
 				1 => {
 					// relay: UTF-8 string
@@ -1284,7 +1284,7 @@ mod tests {
 		// Decode back
 		let decoded =
 			CashuPaymentRequest::decode_nprofile(&nprofile).expect("should decode nprofile");
-		assert_eq!(decoded.0, pubkey_bytes);
+		assert_eq!(&decoded.0[..], &pubkey_bytes[..]);
 		assert!(decoded.1.is_empty());
 	}
 
