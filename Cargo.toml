@@ -21,8 +21,8 @@ default = ["std"]
 [dependencies]
 #lightning-invoice = { version = "0.34", default-features = false }
 #lightning = { version = "0.2.0", default-features = false, features = ["dnssec"] }
-lightning-invoice = { git = "https://github.com/lightningdevkit/rust-lightning", rev = "369a2cf9c8ef810deea0cd2b4cf6ed0691b78144", default-features = false }
-lightning = { git = "https://github.com/lightningdevkit/rust-lightning", rev = "369a2cf9c8ef810deea0cd2b4cf6ed0691b78144", default-features = false, features = ["dnssec"] }
+lightning-invoice = { git = "https://github.com/lightningdevkit/rust-lightning", rev = "a1d4e2f26eea696a0a1ebc2fe56abd884905bd5f", default-features = false }
+lightning = { git = "https://github.com/lightningdevkit/rust-lightning", rev = "a1d4e2f26eea696a0a1ebc2fe56abd884905bd5f", default-features = false, features = ["dnssec"] }
 bitcoin = { version = "0.32", default-features = false }
 getrandom = { version = "0.3", default-features = false, optional = true }
 dnssec-prover = { version = "0.6", default-features = false, optional = true, features = ["validation", "std", "tokio"] }
@@ -34,5 +34,5 @@ serde_json = { version = "1.0", default-features = false, optional = true, featu
 tokio = { version = "1.0", default-features = false, features = ["rt", "macros"] }
 #lightning = { version = "0.2.0", features = ["std"] }
 #lightning-net-tokio = { version = "0.2.0", default-features = false }
-lightning = { git = "https://github.com/lightningdevkit/rust-lightning", rev = "369a2cf9c8ef810deea0cd2b4cf6ed0691b78144", features = ["std"] }
-lightning-net-tokio = { git = "https://github.com/lightningdevkit/rust-lightning", rev = "369a2cf9c8ef810deea0cd2b4cf6ed0691b78144", default-features = false }
+lightning = { git = "https://github.com/lightningdevkit/rust-lightning", rev = "a1d4e2f26eea696a0a1ebc2fe56abd884905bd5f", features = ["std"] }
+lightning-net-tokio = { git = "https://github.com/lightningdevkit/rust-lightning", rev = "a1d4e2f26eea696a0a1ebc2fe56abd884905bd5f", default-features = false }
